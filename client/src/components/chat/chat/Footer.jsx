@@ -44,7 +44,7 @@ const Footer = ({
   setFile,
   file,
   setImage,
-  sendTextOnClick,
+  sendAiText,
 }) => {
   useEffect(() => {
     const getImage = async () => {
@@ -103,7 +103,7 @@ const Footer = ({
       </Search>
 
       <button onClick={(e) => sendText()}>send</button>
-      <button onClick={(e) => sendTextOnClick()}>AI</button>
+      <button onClick={(e) => sendAiText()}>AI</button>
       <Mic />
     </Container>
   );

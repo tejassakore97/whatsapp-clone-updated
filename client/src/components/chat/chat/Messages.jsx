@@ -107,7 +107,7 @@ const Messages = ({ person, conversation }) => {
     setNewMessageFlag((prev) => !prev);
   };
 
-  const sendTextOnClick = async () => {
+  const sendAiText = async () => {
     let prompt = value;
     if (!value) return;
     try {
@@ -162,7 +162,7 @@ const Messages = ({ person, conversation }) => {
         setFile={setFile}
         file={file}
         setImage={setImage}
-        sendTextOnClick={sendTextOnClick}
+        sendAiText={sendAiText}
       />
     </Wrapper>
   );
