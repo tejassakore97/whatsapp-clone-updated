@@ -36,7 +36,7 @@ const Container = styled(Box)`
 const Messages = ({ person, conversation }) => {
   const [messages, setMessages] = useState([]);
   const [incomingMessage, setIncomingMessage] = useState(null);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(null);
   const [file, setFile] = useState();
   const [image, setImage] = useState();
 
@@ -76,91 +76,11 @@ const Messages = ({ person, conversation }) => {
     (member) => member !== account.sub
   );
 
-  const sendAIText = async (e) => {
-    let code = 0;
-    let prompt = value;
-
-    code = e.key || e.which;
-    if (!value) return;
-
-    if (code === "Enter") {
-      try {
-        setValue("loading ...");
-        const response = await getAIResponse({
-          prompt: prompt.replace(AiMessageString, ""),
-        });
-        setValue(response.text);
-        return;
-      } catch (error) {
-        console.error("Error fetching AI response:", error);
-      }
-
-      let message = {};
-      if (!file) {
-        message = {
-          senderId: account.sub,
-          receiverId: receiverId,
-          conversationId: conversation._id,
-          type: "text",
-          text: value,
-        };
-      } else {
-        message = {
-          senderId: account.sub,
-          conversationId: conversation._id,
-          receiverId: receiverId,
-          type: "file",
-          text: image,
-        };
-      }
-
-      socket.current.emit("sendMessage", message);
-      await newMessages(message);
-
-      setValue("");
-      setFile();
-      setImage("");
-      setNewMessageFlag((prev) => !prev);
-    }
-  };
-
-  const sendText = async (e) => {
+  const sendText = async () => {
     let code = 0;
 
-    code = e.key || e.which;
     if (!value) return;
 
-    if (code === "Enter") {
-      let message = {};
-      if (!file) {
-        message = {
-          senderId: account.sub,
-          receiverId: receiverId,
-          conversationId: conversation._id,
-          type: "text",
-          text: value,
-        };
-      } else {
-        message = {
-          senderId: account.sub,
-          conversationId: conversation._id,
-          receiverId: receiverId,
-          type: "file",
-          text: image,
-        };
-      }
-      socket.current.emit("sendMessage", message);
-      await newMessages(message);
-
-      setValue("");
-      setFile();
-      setImage("");
-      setNewMessageFlag((prev) => !prev);
-    }
-  };
-
-  const sendTextOnClick = async () => {
-    if (!value) return;
     let message = {};
     if (!file) {
       message = {
@@ -181,7 +101,45 @@ const Messages = ({ person, conversation }) => {
     }
     socket.current.emit("sendMessage", message);
     await newMessages(message);
+    setValue("");
+    setFile();
+    setImage("");
+    setNewMessageFlag((prev) => !prev);
+  };
 
+  const sendTextOnClick = async () => {
+    let prompt = value;
+    if (!value) return;
+    try {
+      setValue("loading ...");
+      const response = await getAIResponse({
+        prompt: prompt,
+      });
+      setValue(response.text);
+      return;
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+    }
+    let message = {};
+    if (!file) {
+      message = {
+        senderId: account.sub,
+        receiverId: receiverId,
+        conversationId: conversation._id,
+        type: "text",
+        text: value,
+      };
+    } else {
+      message = {
+        senderId: account.sub,
+        conversationId: conversation._id,
+        receiverId: receiverId,
+        type: "file",
+        text: image,
+      };
+    }
+    socket.current.emit("sendMessage", message);
+    await newMessages(message);
     setValue("");
     setFile();
     setImage("");
@@ -204,7 +162,6 @@ const Messages = ({ person, conversation }) => {
         setFile={setFile}
         file={file}
         setImage={setImage}
-        sendAIText={sendAIText}
         sendTextOnClick={sendTextOnClick}
       />
     </Wrapper>

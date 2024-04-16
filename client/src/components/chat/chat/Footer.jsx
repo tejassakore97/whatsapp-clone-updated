@@ -44,7 +44,6 @@ const Footer = ({
   setFile,
   file,
   setImage,
-  sendAIText,
   sendTextOnClick,
 }) => {
   useEffect(() => {
@@ -70,12 +69,6 @@ const Footer = ({
     if (e.key == "Enter") {
       if (e.shiftKey) {
         setValue((prevValue) => prevValue + "\n");
-      } else {
-        if (value.includes("send ai")) {
-          sendAIText(e);
-        } else {
-          sendText(e);
-        }
       }
     }
   }
@@ -109,7 +102,7 @@ const Footer = ({
         />
       </Search>
 
-      <button onClick={(e) => sendTextOnClick()}>send</button>
+      <button onClick={(e) => sendText()}>send</button>
       <button onClick={(e) => sendTextOnClick()}>AI</button>
       <Mic />
     </Container>
